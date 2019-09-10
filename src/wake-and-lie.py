@@ -19,7 +19,6 @@ def convert_timestamp(timestamp: list) -> str:
             timestamp[3],
             )
 
-
 if __name__ == "__main__":
     MESSAGE_TIMESTAMP = re.compile("(\d\d)\.(\d\d)\.(\d{4}) ((\d\d:\d\d):\d\d)")
     TIMESTAMP = re.compile('((\d{4})-(\d\d)-(\d\d))T((\d\d):(\d\d))([+|-](\d\d):(\d\d))')
@@ -27,7 +26,7 @@ if __name__ == "__main__":
     LYING_DOWN_TIME = re.compile("(Л[ё|е]г) (\d?\d:\d\d)", re.M) 
     PARSER = 'html5lib'
 
-    input_file_name = '../../messages.html'
+    input_file_name = input('Enter full name of file (with path): ')
     table = set([])
     with open(input_file_name, 'r') as doc:
         messages = BSoup(
@@ -56,8 +55,8 @@ if __name__ == "__main__":
                     ivent.remove(iv)
 
             if len(ivent) == 2:
-                table.add(tuple(ivent))
+                table.add(tuple([ivent[1], ivent[0].string]))
             if len(ivent) == 4:
-                table.add((ivent[0], ivent[2]))
-                table.add((ivent[1], ivent[3]))
-    pprint(table)
+                table.add((ivent[2], ivent[0].string))
+                table.add((ivent[3], ivent[1].string))
+    pprint(sorted(table, key=(lambda item: item[0])))
