@@ -1,6 +1,24 @@
-import re 
+import re, datetime
 from bs4 import BeautifulSoup as BSoup
 from pprint import pprint
+
+
+def get_bodies(messages: list) -> list:
+    bodies = []
+    for message in messages:
+        body = message.find(attrs={'class': 'body'})
+        if body:
+            bodies.append(body)
+    return bodies
+
+def convert_timestamp(timestamp: list) -> str:
+    return '{}-{}-{}T{}'.format(
+            timestamp[2],
+            timestamp[1],
+            timestamp[0],
+            timestamp[3],
+            )
+
 
 if __name__ == "__main__":
     MESSAGE_TIMESTAMP = re.compile("(\d\d)\.(\d\d)\.(\d{4}) ((\d\d:\d\d):\d\d)")
@@ -17,29 +35,21 @@ if __name__ == "__main__":
                 PARSER,
                 ).find_all(name='div', attrs={'class': 'default'})
 
-        for message in messages:
-            body = message.find(name='div', attrs={'class': 'body'})  
-            
+        for body in get_bodies(messages):
             timestamp = body.find(attrs={'class':'date'})
-            text = body.find(attrs={'class':'text'})
-            if not timestamp or not text:
+            if not timestamp:
                 continue
+            timestamp = convert_timestamp(MESSAGE_TIMESTAMP.match(timestamp.get('title')).groups())
             
-            ts_groups = MESSAGE_TIMESTAMP.match(timestamp.get('title')).groups()
-            timestamp = '{}-{}-{}T{}'.format(
-                    ts_groups[2],
-                    ts_groups[1],
-                    ts_groups[0],
-                    ts_groups[3],
-                    )
+            text = body.find(attrs={'class':'text'})
+            if not text:
+                continue
             text = text.text.strip()
             
             ivent = [WAKING_UP_TIME.search(text), LYING_DOWN_TIME.search(text)]
             if ivent[0]:
-                ivent[0] = ivent[0].string()
                 ivent.append(timestamp)
             if ivent[1]:
-                ivent[1] = ivent[1].string()
                 ivent.append(timestamp)
             for iv in ivent[:]:
                 if not iv:
