@@ -1,3 +1,4 @@
+import sys
 import re, datetime
 from bs4 import BeautifulSoup as BSoup
 from pprint import pprint
@@ -26,7 +27,8 @@ if __name__ == "__main__":
     LYING_DOWN_TIME = re.compile("(Л[ё|е]г) (\d?\d:\d\d)", re.M) 
     PARSER = 'html5lib'
 
-    input_file_name = input('Enter full name of file (with path): ')
+    
+    input_file_name = sys.argv[1]
     table = set([])
     with open(input_file_name, 'r') as doc:
         messages = BSoup(
@@ -59,4 +61,5 @@ if __name__ == "__main__":
             if len(ivent) == 4:
                 table.add((ivent[2], ivent[0].string))
                 table.add((ivent[3], ivent[1].string))
-    pprint(sorted(table, key=(lambda item: item[0])))
+    for stamp, ivent in sorted(table, key=(lambda item: item[0])):
+        print(f'(\'{stamp}\', \'{ivent}\')')
