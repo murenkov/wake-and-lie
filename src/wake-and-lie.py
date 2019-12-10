@@ -1,7 +1,6 @@
 import sys
-import re, datetime
+import re
 from bs4 import BeautifulSoup as BSoup
-from pprint import pprint
 
 
 def get_bodies(messages: list) -> list:
@@ -18,22 +17,22 @@ def convert_timestamp(timestamp: list) -> str:
 
 
 if __name__ == "__main__":
-    MESSAGE_TIMESTAMP = re.compile("(\d\d)\.(\d\d)\.(\d{4}) ((\d\d:\d\d):\d\d)")
+    MESSAGE_TIMESTAMP = re.compile(r"(\d\d)\.(\d\d)\.(\d{4}) ((\d\d:\d\d):\d\d)")
     TIMESTAMP = re.compile(
-        "((\d{4})-(\d\d)-(\d\d))T((\d\d):(\d\d))([+|-](\d\d):(\d\d))"
+        r"((\d{4})-(\d\d)-(\d\d))T((\d\d):(\d\d))([+|-](\d\d):(\d\d))"
     )
-    WAKING_UP_TIME = re.compile("(Встал) (\d?\d:\d\d)", re.M)
-    LYING_DOWN_TIME = re.compile("(Л[ё|е]г) (\d?\d:\d\d)", re.M)
+    WAKING_UP_TIME = re.compile(r"(Встал) (\d?\d:\d\d)", re.M)
+    LYING_DOWN_TIME = re.compile(r"(Л[ё|е]г) (\d?\d:\d\d)", re.M)
     PARSER = "html5lib"
 
-    input_file_name = sys.argv[1]
-    table = set([])
-    with open(input_file_name, "r") as doc:
-        messages = BSoup(doc.read(), PARSER).find_all(
+    FILENAME = sys.argv[1]
+    table = set()
+    with open(FILENAME, "r") as doc:
+        MESSAGES = BSoup(doc.read(), PARSER).find_all(
             name="div", attrs={"class": "default"}
         )
 
-        for body in get_bodies(messages):
+        for body in get_bodies(MESSAGES):
             timestamp = body.find(attrs={"class": "date"})
             if not timestamp:
                 continue
