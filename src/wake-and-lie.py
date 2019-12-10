@@ -14,7 +14,7 @@ def get_bodies(messages: list) -> list:
 
 
 def convert_timestamp(timestamp: list) -> str:
-    return "{}-{}-{}T{}".format(timestamp[2], timestamp[1], timestamp[0], timestamp[3])
+    return f"{timestamp[2]}-{timestamp[1]}-{timestamp[0]}T{timestamp[3]}"
 
 
 if __name__ == "__main__":
