@@ -60,4 +60,4 @@ if __name__ == "__main__":
                 table.add((ivent[2], ivent[0].string))
                 table.add((ivent[3], ivent[1].string))
     for stamp, ivent in sorted(table, key=(lambda item: item[0])):
-        print(f"('{stamp}', '{ivent}')")
+        print(f"'{stamp}','{ivent}'")
